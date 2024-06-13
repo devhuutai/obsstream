@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Advance P2P NOAH Streaming Tool</title>
+    <!-- CDNBye Plugin -->
+    <!-- Author : https://www.facebook.com/noahDevBE/-->
+    <script src="//cdn.jsdelivr.net/npm/cdnbye@latest"></script>
+    <link href="/jwplayerSkin.css" rel="stylesheet" />
+    <!-- JWPlayer Hlsjs Provider -->
+    <script src="//cdn.jsdelivr.net/npm/cdnbye@latest/dist/jwplayer.provider.hls.js"></script>
+    <!-- JW Player Builds -->
+    <script src="//ssl.p.jwpcdn.com/player/v/8.21.2/jwplayer.js"></script>
+    <!-- <script src="//cdn.jsdelivr.net/npm/devtools-detector"></script> <script type="text/javascript"> if(typeof devtoolsDetector === "undefined") { location.reload(); } else { devtoolsDetector.launch(); devtoolsDetector.addListener(function (isOpen) { if (isOpen) { location.reload(); } }); } </script> -->
+    <style>
+      #demoplayer {
+        position: absolute;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header></header>
+
+    <div id="demoplayer">
+    </div>
+    
+    <script>
+      jwplayer.key = "uoW6qHjBL3KNudxKVnwa3rt5LlTakbko9e6aQ6VUyKQ=";
+      var playerInstance = jwplayer("demoplayer").setup({
+        autostart: false,
+        controls: true,
+        sharing: false,
+        image: false,
+        primary: "hlsjs",
+        preload: true,
+        displaytitle: false,
+        displaydescription: false,
+        abouttext: "Tài Nguyễn ",
+        aboutlink: "https://www.facebook.com/noahDevBE/",
+        skin: {
+          name: "netflix",
+        },
+        logo: {
+          file: "",
+          link: "",
+        },
+        hlsjsConfig: {
+          debug: false,
+          maxBufferSize: 0,
+          maxBufferLength: 40,
+          liveSyncDurationCount: 40,
+          p2pConfig: {
+            live: true,
+            announceLocation: "vn",
+          },
+        },
+        advertising: {
+          client: "vast",
+          skipoffset: "5",
+          adscheduleid: "PhimA1",
+          schedule: [
+            {
+              offset: "pre",
+              tag: "https://khongcogidau.top/vast.xml",
+            },
+          ],
+        },
+        playlist: [
+          {
+            title: "",
+            description: "Demo",
+            image: "",
+            sources: [
+              {
+                file: "https://obs.tool2x.cc/noah/<%=dataFormat?.token%>/playlist.m3u8", // File blank.mp4 được tải lên trước
+                type: "hls",
+              },
+            ],
+          },
+        ],
+      });
+      playerInstance.on("error", function (event) {
+        if (event.code === 232404) {
+          var playerContainer = document.getElementById("demoplayer");
+          playerContainer.innerHTML = '<img style="width: 100%;" src="https://media.tenor.com/UnFx-k_lSckAAAAM/amalie-steiness.gif" />';
+        }
+      });
+
+      // playerInstance.on("complete", function () {
+      //   playerInstance.load({
+      //     file: "http://localhost:8000/noah/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHJlYW1LZXkiOiJzdHJlYW0tMHNrZmdmNTUiLCJpYXQiOjE2ODc1ODI1Mzd9.aa1pXnYMeT4_TcErniVZx5O3XHQ4CtNNlUF9AKqr00U/playlist.m3u8",
+      //     type: "hls",
+      //   });
+      // });
+      playerInstance.on("ready", function () {
+        const buttonId = "download-video-button";
+        const iconPath =
+          "https://onlinepngtools.com/images/examples-onlinepngtools/google-logo-transparent.png";
+        const tooltipText = "Advance P2P Noah";
+
+        function buttonClickAction() {
+          const playlistItem = playerInstance.getPlaylistItem();
+          const anchor = document.createElement("a");
+          const fileUrl = playlistItem.file;
+          anchor.setAttribute("href", fileUrl);
+          const downloadName = playlistItem.file.split("/").pop();
+          anchor.setAttribute("download", downloadName);
+          anchor.style.display = "none";
+          document.body.appendChild(anchor);
+          anchor.click();
+          document.body.removeChild(anchor);
+        }
+
+        const playerContainer = playerInstance.getContainer();
+        const buttonContainer = playerContainer.querySelector(
+          ".jw-button-container"
+        );
+        const spacer = buttonContainer.querySelector(".jw-spacer");
+        const timeSlider = playerContainer.querySelector(".jw-slider-time");
+        buttonContainer.replaceChild(timeSlider, spacer);
+
+        playerInstance.on("adBlock", () => {
+          const modal = document.querySelector("div.modal");
+          modal.style.display = "flex";
+
+          document
+            .getElementById("close")
+            .addEventListener("click", () => location.reload());
+        });
+
+        const rewindContainer = playerContainer.querySelector(
+          ".jw-display-icon-rewind"
+        );
+        const forwardContainer = rewindContainer.cloneNode(true);
+        const forwardDisplayButton =
+          forwardContainer.querySelector(".jw-icon-rewind");
+        forwardDisplayButton.style.transform = "scaleX(-1)";
+        forwardDisplayButton.ariaLabel = "Forward 10 Seconds";
+        const nextContainer = playerContainer.querySelector(
+          ".jw-display-icon-next"
+        );
+        nextContainer.parentNode.insertBefore(forwardContainer, nextContainer);
+
+        playerContainer.querySelector(".jw-display-icon-next").style.display =
+          "none"; // hide next button
+        const rewindControlBarButton =
+          buttonContainer.querySelector(".jw-icon-rewind");
+        const forwardControlBarButton = rewindControlBarButton.cloneNode(true);
+        forwardControlBarButton.style.transform = "scaleX(-1)";
+        forwardControlBarButton.ariaLabel = "Forward 10 Seconds";
+        rewindControlBarButton.parentNode.insertBefore(
+          forwardControlBarButton,
+          rewindControlBarButton.nextElementSibling
+        );
+
+        [forwardDisplayButton, forwardControlBarButton].forEach((button) => {
+          button.onclick = () => {
+            playerInstance.seek(playerInstance.getPosition() + 10);
+          };
+        });
+      });
+    </script>
+  </body>
+</html>
